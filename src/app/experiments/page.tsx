@@ -5,7 +5,16 @@ import { useRouter } from 'next/navigation';
 import { ExperimentSession } from '@/types/log';
 import LogUploader from '@/components/LogUploader';
 import SpectralChart from '@/components/SpectralChart';
-import { Layers, History, FlaskConical, Search, BarChart3, Trash2 } from 'lucide-react';
+import Link from 'next/link';
+import {
+    Layers,
+    History,
+    FlaskConical,
+    Search,
+    BarChart3,
+    Trash2,
+    Activity
+} from 'lucide-react';
 
 export default function ExperimentsPage() {
     const router = useRouter();
@@ -55,19 +64,26 @@ export default function ExperimentsPage() {
     const activeSessions = sessions.filter(s => selectedIds.includes(s.id));
 
     return (
-        <div className="min-h-screen bg-slate-50 p-6 md:p-10">
+        <div className="min-h-screen bg-background p-6 md:p-10 transition-colors duration-300">
             <div className="max-w-7xl mx-auto space-y-8">
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
-                        <h1 className="text-3xl font-bold text-slate-900 tracking-tight flex items-center gap-3">
-                            <FlaskConical className="text-blue-600" />
+                        <h1 className="text-3xl font-bold text-foreground tracking-tight flex items-center gap-3">
+                            <FlaskConical className="text-primary" />
                             Photonics Log Analyzer
                         </h1>
                         <p className="text-slate-500 mt-1">Spectral Data Management & Analysis Suite</p>
                     </div>
 
                     <div className="flex items-center gap-4">
+                        <Link
+                            href="/experiments/live"
+                            className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-indigo-900/20"
+                        >
+                            <Activity className="w-4 h-4" />
+                            Live Stream
+                        </Link>
                         <div className="relative">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                             <input
@@ -75,7 +91,7 @@ export default function ExperimentsPage() {
                                 placeholder="Search sessions..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all"
+                                className="pl-10 pr-4 py-2 bg-card border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                             />
                         </div>
                     </div>
@@ -85,7 +101,7 @@ export default function ExperimentsPage() {
                     {/* Sidebar Area */}
                     <div className="lg:col-span-4 space-y-8">
                         {/* Uploader Section */}
-                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                        <div className="bg-card p-6 rounded-2xl shadow-sm border border-border">
                             <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-2">
                                 <Layers className="w-4 h-4" />
                                 Ingest Data
@@ -94,7 +110,7 @@ export default function ExperimentsPage() {
                         </div>
 
                         {/* Session History */}
-                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                        <div className="bg-card p-6 rounded-2xl shadow-sm border border-border overflow-hidden">
                             <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-2">
                                 <History className="w-4 h-4" />
                                 Recent Sessions
@@ -108,8 +124,8 @@ export default function ExperimentsPage() {
                                             key={session.id}
                                             onClick={() => toggleSession(session.id)}
                                             className={`group flex items-center justify-between p-3 rounded-xl border cursor-pointer transition-all ${selectedIds.includes(session.id)
-                                                ? "bg-blue-50/50 border-blue-200"
-                                                : "bg-white border-slate-100 hover:border-slate-300"
+                                                ? "bg-primary/10 border-primary/30"
+                                                : "bg-card border-border hover:border-slate-500"
                                                 }`}
                                         >
                                             <div className="flex items-center gap-3 overflow-hidden">
@@ -118,8 +134,8 @@ export default function ExperimentsPage() {
                                                     style={{ backgroundColor: session.color }}
                                                 />
                                                 <div className="overflow-hidden">
-                                                    <p className="text-sm font-medium text-slate-700 truncate">{session.name}</p>
-                                                    <p className="text-[10px] text-slate-400">
+                                                    <p className="text-sm font-medium text-foreground truncate">{session.name}</p>
+                                                    <p className="text-[10px] text-slate-500">
                                                         {new Date(session.created_at).toLocaleDateString()}
                                                     </p>
                                                 </div>
@@ -130,7 +146,7 @@ export default function ExperimentsPage() {
                                                         e.stopPropagation();
                                                         router.push(`/experiments/${session.id}`);
                                                     }}
-                                                    className="opacity-0 group-hover:opacity-100 p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                                                    className="opacity-0 group-hover:opacity-100 p-1.5 text-primary hover:bg-primary/10 rounded-lg transition-all"
                                                 >
                                                     <BarChart3 className="w-4 h-4" />
                                                 </button>
@@ -150,24 +166,24 @@ export default function ExperimentsPage() {
 
                     {/* Visualization Area */}
                     <div className="lg:col-span-8 space-y-8">
-                        <SpectralChart sessions={activeSessions} />
+                        <SpectralChart sessions={activeSessions} isDark={true} />
 
-                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                            <h2 className="text-base font-semibold text-slate-800 mb-4">Quick Insights</h2>
+                        <div className="bg-card p-6 rounded-2xl shadow-sm border border-border">
+                            <h2 className="text-base font-semibold text-foreground mb-4">Quick Insights</h2>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                                <div className="p-4 bg-accent/50 rounded-xl border border-border">
                                     <p className="text-xs text-slate-500 font-medium">Active Overlays</p>
-                                    <p className="text-2xl font-bold text-slate-800 tracking-tight">{activeSessions.length}</p>
+                                    <p className="text-2xl font-bold text-foreground tracking-tight">{activeSessions.length}</p>
                                 </div>
-                                <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                                <div className="p-4 bg-accent/50 rounded-xl border border-border">
                                     <p className="text-xs text-slate-500 font-medium">Total Data Points</p>
-                                    <p className="text-2xl font-bold text-slate-800 tracking-tight">
+                                    <p className="text-2xl font-bold text-foreground tracking-tight">
                                         {activeSessions.reduce((acc, curr) => acc + curr.data.length, 0)}
                                     </p>
                                 </div>
-                                <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                                <div className="p-4 bg-accent/50 rounded-xl border border-border">
                                     <p className="text-xs text-slate-500 font-medium">Storage Method</p>
-                                    <p className="text-2xl font-bold text-slate-800 tracking-tight">Local (P2)</p>
+                                    <p className="text-2xl font-bold text-foreground tracking-tight">Local (P4)</p>
                                 </div>
                             </div>
                         </div>

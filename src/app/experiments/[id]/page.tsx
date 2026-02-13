@@ -2,7 +2,17 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ChevronLeft, FlaskConical, Settings2, Download, RefreshCw, Sparkles, FileStack, Image, BookOpen } from 'lucide-react';
+import {
+    ChevronLeft,
+    FlaskConical,
+    Settings2,
+    Download,
+    RefreshCw,
+    Sparkles,
+    FileStack,
+    Image,
+    BookOpen
+} from 'lucide-react';
 import { ExperimentSession, ParsedLog, AnalysisResult } from '@/types/log';
 import SpectralChart from '@/components/SpectralChart';
 import AnalyticsPanel from '@/components/analytics/AnalyticsPanel';
@@ -68,9 +78,9 @@ export default function ExperimentDetailPage() {
 
     if (!session) {
         return (
-            <div className="flex items-center justify-center min-h-screen bg-slate-50">
+            <div className="flex items-center justify-center min-h-screen bg-background">
                 <div className="text-center animate-pulse">
-                    <FlaskConical className="w-12 h-12 text-slate-300 mx-auto mb-4" />
+                    <FlaskConical className="w-12 h-12 text-slate-700 mx-auto mb-4" />
                     <p className="text-slate-500">Loading experimental data...</p>
                 </div>
             </div>
@@ -78,26 +88,26 @@ export default function ExperimentDetailPage() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 p-6 md:p-10">
+        <div className="min-h-screen bg-background p-6 md:p-10 transition-colors duration-300">
             <div className="max-w-7xl mx-auto space-y-8">
                 {/* Navigation & Header */}
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-border pb-8">
                     <div className="space-y-1">
                         <Link
                             href="/experiments"
-                            className="flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors mb-2"
+                            className="flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-primary transition-colors mb-2"
                         >
                             <ChevronLeft className="w-4 h-4" />
                             Back to Dashboard
                         </Link>
-                        <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
-                            <span className="p-2 bg-blue-600 rounded-lg">
+                        <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
+                            <span className="p-2 bg-primary rounded-lg">
                                 <FlaskConical className="text-white w-6 h-6" />
                             </span>
                             {session.name}
                         </h1>
-                        <p className="text-slate-500">
-                            Session ID: <span className="font-mono text-xs">{session.id}</span> •
+                        <p className="text-slate-500 text-sm">
+                            Session ID: <span className="font-mono text-xs text-indigo-400">{session.id}</span> •
                             Recorded on {new Date(session.created_at).toLocaleString()}
                         </p>
                     </div>
@@ -105,9 +115,9 @@ export default function ExperimentDetailPage() {
                     <div className="flex items-center gap-3">
                         <button
                             onClick={() => setShowFitting(!showFitting)}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-xl border font-medium transition-all ${showFitting
-                                ? "bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-200"
-                                : "bg-white border-slate-200 text-slate-700 hover:border-indigo-400 hover:text-indigo-600"
+                            className={`flex items-center gap-2 px-4 py-2 rounded-xl border font-bold transition-all ${showFitting
+                                    ? "bg-primary border-primary text-white shadow-lg shadow-primary/20"
+                                    : "bg-card border-border text-slate-400 hover:border-primary hover:text-primary"
                                 }`}
                         >
                             <Sparkles className="w-4 h-4" />
@@ -115,7 +125,7 @@ export default function ExperimentDetailPage() {
                         </button>
                         <button
                             onClick={() => setIsExportModalOpen(true)}
-                            className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-slate-700 font-medium hover:text-blue-600 hover:border-blue-200 transition-all"
+                            className="flex items-center gap-2 px-4 py-2 bg-card border border-border rounded-xl text-slate-400 font-bold hover:text-primary hover:border-primary transition-all"
                         >
                             <Image className="w-4 h-4" />
                             Export Image
@@ -130,12 +140,13 @@ export default function ExperimentDetailPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                     {/* Chart Section */}
                     <div className="lg:col-span-8 space-y-8">
-                        <div className="relative group">
+                        <div className="bg-card p-4 rounded-3xl border border-border overflow-hidden shadow-2xl shadow-black/20">
                             <SpectralChart
                                 sessions={[session]}
                                 peaks={peaks}
                                 fittingData={fittingData}
                                 onRangeChange={setFittingRange}
+                                isDark={true}
                             />
                         </div>
 
@@ -146,23 +157,23 @@ export default function ExperimentDetailPage() {
                     {/* Controls & Export Sidebar */}
                     <div className="lg:col-span-4 space-y-8">
                         {/* Analysis Settings */}
-                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                            <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-2">
+                        <div className="bg-card p-6 rounded-2xl shadow-sm border border-border">
+                            <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-500 mb-4 flex items-center gap-2">
                                 <Settings2 className="w-4 h-4" />
                                 Analysis Settings
                             </h2>
                             <div className="space-y-4">
                                 <div>
-                                    <label className="text-xs font-medium text-slate-500 block mb-2">Fitting Model</label>
-                                    <select className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                                    <label className="text-xs font-bold text-slate-600 uppercase tracking-widest block mb-2">Fitting Model</label>
+                                    <select className="w-full p-3 bg-background border border-border rounded-xl text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer">
                                         <option>Gaussian</option>
-                                        <option disabled>Lorentzian (P3)</option>
+                                        <option disabled>Lorentzian (V2)</option>
                                     </select>
                                 </div>
                                 <div className="pt-2">
                                     <button
                                         onClick={() => { setFittingRange(null); setShowFitting(false); }}
-                                        className="w-full flex items-center justify-center gap-2 p-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-semibold transition-colors"
+                                        className="w-full flex items-center justify-center gap-2 p-3 bg-accent/20 hover:bg-accent/40 text-slate-400 hover:text-foreground rounded-xl text-sm font-bold border border-border transition-all"
                                     >
                                         <RefreshCw className="w-4 h-4" />
                                         Reset Zoom & Fit
@@ -172,43 +183,43 @@ export default function ExperimentDetailPage() {
                         </div>
 
                         {/* Publication Tools */}
-                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                            <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-2">
+                        <div className="bg-card p-6 rounded-2xl shadow-sm border border-border">
+                            <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-500 mb-4 flex items-center gap-2">
                                 <FileStack className="w-4 h-4" />
                                 Publication Tools
                             </h2>
                             <div className="space-y-3">
                                 <button
                                     onClick={() => setIsExportModalOpen(true)}
-                                    className="w-full flex items-center justify-between p-4 bg-slate-50 hover:bg-blue-50 border border-slate-100 hover:border-blue-100 rounded-xl transition-all group"
+                                    className="w-full flex items-center justify-between p-4 bg-background/50 hover:bg-primary/10 border border-border hover:border-primary/30 rounded-xl transition-all group"
                                 >
                                     <div className="text-left">
-                                        <p className="text-sm font-bold text-slate-700 group-hover:text-blue-600">High-Res Graph</p>
-                                        <p className="text-[10px] text-slate-400">Export PNG/SVG (300 DPI+)</p>
+                                        <p className="text-sm font-bold text-slate-300 group-hover:text-primary">High-Res Graph</p>
+                                        <p className="text-[10px] text-slate-500">Export PNG/SVG (300 DPI+)</p>
                                     </div>
-                                    <Download className="w-5 h-5 text-slate-300 group-hover:text-blue-500 transition-colors" />
+                                    <Download className="w-5 h-5 text-slate-600 group-hover:text-primary transition-colors" />
                                 </button>
 
                                 <button
                                     onClick={handleDataPackageExport}
-                                    className="w-full flex items-center justify-between p-4 bg-slate-50 hover:bg-emerald-50 border border-slate-100 hover:border-emerald-100 rounded-xl transition-all group"
+                                    className="w-full flex items-center justify-between p-4 bg-background/50 hover:bg-emerald-500/10 border border-border hover:border-emerald-500/30 rounded-xl transition-all group"
                                 >
                                     <div className="text-left">
-                                        <p className="text-sm font-bold text-slate-700 group-hover:text-emerald-600">Full Data Package</p>
-                                        <p className="text-[10px] text-slate-400">Integrated CSV/JSON Export</p>
+                                        <p className="text-sm font-bold text-slate-300 group-hover:text-emerald-500">Full Data Package</p>
+                                        <p className="text-[10px] text-slate-500">Integrated CSV/JSON Export</p>
                                     </div>
-                                    <Download className="w-5 h-5 text-slate-300 group-hover:text-emerald-500 transition-colors" />
+                                    <Download className="w-5 h-5 text-slate-600 group-hover:text-emerald-500 transition-colors" />
                                 </button>
                             </div>
                         </div>
 
-                        <div className="bg-gradient-to-br from-indigo-600 to-indigo-800 p-6 rounded-2xl shadow-lg text-white">
-                            <h3 className="font-bold flex items-center gap-2 mb-2">
-                                <BookOpen className="w-4 h-4 text-indigo-200" />
-                                Phase 3 Active
+                        <div className="bg-gradient-to-br from-indigo-900 to-indigo-950 p-6 rounded-2xl shadow-lg border border-indigo-500/20">
+                            <h3 className="font-bold text-white flex items-center gap-2 mb-2">
+                                <BookOpen className="w-4 h-4 text-indigo-400" />
+                                Scientific Insight Active
                             </h3>
-                            <p className="text-xs text-indigo-100 leading-relaxed mb-4">
-                                High-quality export and AI research insights are now available. Ensure your GOOGLE_API_KEY is set in .env.local for AI features.
+                            <p className="text-xs text-indigo-200/70 leading-relaxed">
+                                Utilizing advanced spectral analysis and machine learning to interpret complex photonic phenomena.
                             </p>
                         </div>
                     </div>

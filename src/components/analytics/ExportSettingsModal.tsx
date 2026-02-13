@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, Download, Type, Move, Layers, ImageIcon, Loader2 } from 'lucide-react';
+import { Download, X, Image as ImageIcon, Layers, Loader2 } from 'lucide-react';
 import { toPng, toSvg } from 'html-to-image';
 
 interface ExportSettingsModalProps {
@@ -11,10 +11,14 @@ interface ExportSettingsModalProps {
     fileName: string;
 }
 
-export default function ExportSettingsModal({ isOpen, onClose, targetId, fileName }: ExportSettingsModalProps) {
+export default function ExportSettingsModal({
+    isOpen,
+    onClose,
+    targetId,
+    fileName
+}: ExportSettingsModalProps) {
     const [format, setFormat] = useState<'png' | 'svg'>('png');
-    const [quality, setQuality] = useState(2); // Pixel ratio
-    const [fontSize, setFontSize] = useState(14);
+    const [quality, setQuality] = useState(2);
     const [isExporting, setIsExporting] = useState(false);
 
     const handleExport = async () => {
@@ -23,15 +27,15 @@ export default function ExportSettingsModal({ isOpen, onClose, targetId, fileNam
 
         setIsExporting(true);
         try {
+            let dataUrl = '';
             const options = {
                 pixelRatio: quality,
-                backgroundColor: '#ffffff',
+                backgroundColor: '#0a0a0b', // Force dark background for export
                 style: {
-                    fontSize: `${fontSize}px`,
+                    borderRadius: '0'
                 }
             };
 
-            let dataUrl;
             if (format === 'png') {
                 dataUrl = await toPng(element, options);
             } else {
@@ -39,7 +43,7 @@ export default function ExportSettingsModal({ isOpen, onClose, targetId, fileNam
             }
 
             const link = document.createElement('a');
-            link.download = `${fileName}_publication.${format}`;
+            link.download = `${fileName.replace(/\s+/g, '_')}_spectrum.${format}`;
             link.href = dataUrl;
             link.click();
             onClose();
@@ -53,103 +57,83 @@ export default function ExportSettingsModal({ isOpen, onClose, targetId, fileNam
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-300">
-            <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl border border-slate-100 overflow-hidden">
-                <div className="p-6 border-b border-slate-50 flex items-center justify-between">
-                    <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                        <Download className="w-5 h-5 text-blue-600" />
-                        Export for Publication
-                    </h3>
-                    <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
-                        <X className="w-5 h-5 text-slate-400" />
-                    </button>
-                </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
+            <div className="relative bg-[#141417] w-full max-w-md rounded-3xl border border-white/10 shadow-2xl shadow-black overflow-hidden animate-in fade-in zoom-in duration-200">
+                <div className="p-8">
+                    <div className="flex items-center justify-between mb-8">
+                        <h2 className="text-xl font-black text-white flex items-center gap-2">
+                            <Download className="w-5 h-5 text-indigo-400" />
+                            Publication Export
+                        </h2>
+                        <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-full transition-colors text-slate-500 hover:text-white">
+                            <X className="w-5 h-5" />
+                        </button>
+                    </div>
 
-                <div className="p-6 space-y-6">
-                    {/* Format Selection */}
-                    <div className="space-y-3">
-                        <label className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-                            <ImageIcon className="w-4 h-4" />
-                            File Format
-                        </label>
-                        <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-6">
+                        {/* Format Selection */}
+                        <div>
+                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-3 block">File Format</label>
+                            <div className="grid grid-cols-2 gap-3">
+                                {(['png', 'svg'] as const).map((f) => (
+                                    <button
+                                        key={f}
+                                        onClick={() => setFormat(f)}
+                                        className={`p-4 rounded-2xl border font-bold uppercase text-xs transition-all ${format === f
+                                                ? "bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-900/40"
+                                                : "bg-[#0a0a0b]/50 border-white/5 text-slate-400 hover:border-white/10 hover:text-slate-300"
+                                            }`}
+                                    >
+                                        {f === 'png' ? 'PNG (High Res)' : 'SVG (Vector)'}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Resolution / Quality */}
+                        <div className="space-y-3">
+                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-1 block">
+                                Resolution Scale (DPI Boost)
+                            </label>
+                            <div className="flex items-center gap-4">
+                                <input
+                                    type="range"
+                                    min="1"
+                                    max="5"
+                                    step="1"
+                                    value={quality}
+                                    onChange={(e) => setQuality(parseInt(e.target.value))}
+                                    className="flex-1 accent-indigo-500"
+                                />
+                                <span className="text-sm font-mono font-bold text-slate-300 w-12 text-center bg-white/5 p-2 rounded-xl">
+                                    x{quality}
+                                </span>
+                            </div>
+                            <p className="text-[10px] text-slate-500 italic">Higher scale results in larger file size but sharper text/lines.</p>
+                        </div>
+
+                        {/* Export Button */}
+                        <div className="pt-4">
                             <button
-                                onClick={() => setFormat('png')}
-                                className={`p-3 rounded-xl border-2 text-sm font-semibold transition-all ${format === 'png' ? 'border-blue-600 bg-blue-50 text-blue-600' : 'border-slate-100 text-slate-400 hover:border-slate-200'
-                                    }`}
+                                onClick={handleExport}
+                                disabled={isExporting}
+                                className="w-full flex items-center justify-center gap-2 p-4 bg-white text-black hover:bg-slate-200 disabled:bg-slate-800 disabled:text-slate-600 rounded-2xl font-black text-sm transition-all shadow-xl shadow-white/5"
                             >
-                                PNG (High Res)
+                                {isExporting ? (
+                                    <>
+                                        <Loader2 className="w-4 h-4 animate-spin" />
+                                        Rendering High-Res...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Download className="w-4 h-4" />
+                                        Generate {format.toUpperCase()}
+                                    </>
+                                )}
                             </button>
-                            <button
-                                onClick={() => setFormat('svg')}
-                                className={`p-3 rounded-xl border-2 text-sm font-semibold transition-all ${format === 'svg' ? 'border-blue-600 bg-blue-50 text-blue-600' : 'border-slate-100 text-slate-400 hover:border-slate-200'
-                                    }`}
-                            >
-                                SVG (Vector)
-                            </button>
                         </div>
                     </div>
-
-                    {/* Resolution / Quality */}
-                    <div className="space-y-3">
-                        <label className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-                            <Layers className="w-4 h-4" />
-                            Resolution Scale (DPI Boost)
-                        </label>
-                        <div className="flex items-center gap-4">
-                            <input
-                                type="range"
-                                min="1"
-                                max="4"
-                                step="1"
-                                value={quality}
-                                onChange={(e) => setQuality(parseInt(e.target.value))}
-                                className="flex-1 accent-blue-600"
-                            />
-                            <span className="text-sm font-mono font-bold text-slate-600 w-12 text-center bg-slate-100 p-1 rounded">
-                                x{quality}
-                            </span>
-                        </div>
-                        <p className="text-[10px] text-slate-400">Scale factor for standard DPI. x2 is recommended for most journals.</p>
-                    </div>
-
-                    {/* Font Fine-tuning */}
-                    <div className="space-y-3">
-                        <label className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-                            <Type className="w-4 h-4" />
-                            Axis Label Font Size
-                        </label>
-                        <div className="flex items-center gap-4">
-                            <input
-                                type="range"
-                                min="8"
-                                max="24"
-                                value={fontSize}
-                                onChange={(e) => setFontSize(parseInt(e.target.value))}
-                                className="flex-1 accent-blue-600"
-                            />
-                            <span className="text-sm font-mono font-bold text-slate-600 w-12 text-center bg-slate-100 p-1 rounded">
-                                {fontSize}px
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="p-6 bg-slate-50 flex gap-3">
-                    <button
-                        onClick={onClose}
-                        className="flex-1 py-3 text-sm font-semibold text-slate-500 hover:text-slate-700 transition-colors"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        onClick={handleExport}
-                        disabled={isExporting}
-                        className="flex-[2] py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-blue-200 flex items-center justify-center gap-2"
-                    >
-                        {isExporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-                        {isExporting ? 'Generating...' : 'Export High-Quality Image'}
-                    </button>
                 </div>
             </div>
         </div>

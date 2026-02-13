@@ -11,6 +11,13 @@ export interface AnalysisResult {
   qFactor: number;
 }
 
+export interface LiveEvent {
+  id: string;
+  timestamp: number;
+  label: string;
+  color?: string;
+}
+
 export interface ExperimentSession {
   id: string;
   name: string;
@@ -18,4 +25,6 @@ export interface ExperimentSession {
   data: ParsedLog[];
   analysis?: AnalysisResult;
   color?: string; // For chart visualization
+  isLive?: boolean;
+  liveEvents?: LiveEvent[];
 }

@@ -42,94 +42,105 @@ export default function AIInsight({ session, analysis }: AIInsightProps) {
     };
 
     return (
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-            <div className="p-6">
-                <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                        <Sparkles className="w-5 h-5 text-indigo-500" />
-                        AI Research Insight
-                    </h3>
+        <div className="bg-card rounded-3xl border border-white/5 shadow-2xl shadow-black/40 overflow-hidden relative group">
+            <div className="absolute inset-0 bg-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+            <div className="p-8 relative z-10">
+                <div className="flex items-center justify-between mb-8">
+                    <div className="space-y-1">
+                        <h3 className="text-xl font-black text-foreground flex items-center gap-2 tracking-tight">
+                            <Sparkles className="w-5 h-5 text-indigo-400" />
+                            AI Research Insight
+                        </h3>
+                        <p className="text-xs text-slate-500 font-bold uppercase tracking-widest pl-7">Advanced Spectral Analysis</p>
+                    </div>
                     {!insights && (
                         <button
                             onClick={generateInsights}
                             disabled={loading}
-                            className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 text-white text-sm font-semibold rounded-xl transition-all shadow-lg shadow-indigo-100"
+                            className="flex items-center gap-3 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 text-white text-sm font-black rounded-2xl transition-all shadow-xl shadow-indigo-900/40 translate-y-0 active:translate-y-1"
                         >
                             {loading ? (
                                 <>
                                     <Loader2 className="w-4 h-4 animate-spin" />
-                                    Analyzing...
+                                    Processing Stream...
                                 </>
                             ) : (
-                                'Analyze with Gemini'
+                                <>
+                                    <Sparkles className="w-4 h-4" />
+                                    Analyze with Gemini
+                                </>
                             )}
                         </button>
                     )}
                 </div>
 
                 {error && (
-                    <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-100 rounded-xl text-red-600 mb-6">
-                        <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                    <div className="flex items-start gap-4 p-5 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-500 mb-8 animate-in fade-in zoom-in duration-300">
+                        <AlertCircle className="w-6 h-6 flex-shrink-0" />
                         <div>
-                            <p className="text-sm font-bold">Analysis Failed</p>
-                            <p className="text-xs">{error}</p>
+                            <p className="text-sm font-black uppercase tracking-wider">Analysis Synchronization Failed</p>
+                            <p className="text-xs opacity-80 mt-1">{error}</p>
                         </div>
                     </div>
                 )}
 
                 {insights ? (
-                    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
                         {/* Summary */}
-                        <div className="space-y-2">
-                            <p className="text-sm font-medium text-slate-500 flex items-center gap-2">
-                                <BookOpen className="w-4 h-4" />
-                                Experimental Summary
+                        <div className="space-y-3">
+                            <p className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                                <BookOpen className="w-3 h-3" />
+                                Executive Summary
                             </p>
-                            <p className="text-slate-700 leading-relaxed italic">
+                            <div className="p-5 bg-background/50 rounded-2xl border border-white/5 italic text-slate-300 leading-relaxed">
                                 "{insights.summary}"
-                            </p>
+                            </div>
                         </div>
 
                         {/* Physical Meaning */}
-                        <div className="space-y-2">
-                            <p className="text-sm font-medium text-slate-500 flex items-center gap-2">
-                                <Lightbulb className="w-4 h-4 text-amber-500" />
-                                Physical Interpretation
+                        <div className="space-y-3">
+                            <p className="text-[10px] font-black text-amber-500 uppercase tracking-[0.2em] flex items-center gap-2">
+                                <Lightbulb className="w-3 h-3" />
+                                Physical interpretation
                             </p>
-                            <p className="text-slate-700 text-sm leading-relaxed">
+                            <p className="text-slate-400 text-sm leading-relaxed px-1">
                                 {insights.physical_meaning}
                             </p>
                         </div>
 
                         {/* Suggestions */}
-                        <div className="space-y-3">
-                            <p className="text-sm font-medium text-slate-500 flex items-center gap-2">
-                                <Microscope className="w-4 h-4 text-emerald-500" />
-                                Future Research Proposals
+                        <div className="space-y-4">
+                            <p className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.2em] flex items-center gap-2">
+                                <Microscope className="w-3 h-3" />
+                                Proposed next steps
                             </p>
-                            <ul className="space-y-2">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 {insights.suggestions.map((suggestion, idx) => (
-                                    <li key={idx} className="flex gap-2 text-xs text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-100">
-                                        <span className="text-indigo-500 font-bold">{idx + 1}.</span>
-                                        {suggestion}
-                                    </li>
+                                    <div key={idx} className="flex gap-4 text-xs text-slate-400 bg-background/40 p-5 rounded-2xl border border-white/5 hover:border-emerald-500/30 transition-colors">
+                                        <span className="text-emerald-500 font-black text-base">{idx + 1}</span>
+                                        <p className="leading-relaxed">{suggestion}</p>
+                                    </div>
                                 ))}
-                            </ul>
+                            </div>
                         </div>
 
-                        <button
-                            onClick={() => setInsights(null)}
-                            className="w-full py-2 text-xs font-semibold text-slate-400 hover:text-slate-600 transition-colors"
-                        >
-                            Reset Analysis
-                        </button>
+                        <div className="pt-4 border-t border-white/5 flex justify-center">
+                            <button
+                                onClick={() => setInsights(null)}
+                                className="text-[10px] font-black uppercase tracking-widest text-slate-600 hover:text-slate-400 transition-colors"
+                            >
+                                Clear Cache & Re-analyze
+                            </button>
+                        </div>
                     </div>
                 ) : (
                     !loading && (
-                        <div className="flex flex-col items-center justify-center py-10 border-2 border-dashed border-slate-100 rounded-2xl bg-slate-50/30">
-                            <Sparkles className="w-8 h-8 text-slate-200 mb-3" />
-                            <p className="text-sm text-slate-400 text-center px-6">
-                                Click the button above to generate AI-powered insights based on your experimental data.
+                        <div className="flex flex-col items-center justify-center py-16 border-2 border-dashed border-white/5 rounded-3xl bg-black/20">
+                            <div className="p-4 bg-indigo-500/5 rounded-full mb-4">
+                                <Sparkles className="w-10 h-10 text-indigo-500/30" />
+                            </div>
+                            <p className="text-sm font-bold text-slate-500 text-center max-w-xs px-6">
+                                Spectral intelligence is currently idle. Click above to synchronize with Gemini Research Engine.
                             </p>
                         </div>
                     )

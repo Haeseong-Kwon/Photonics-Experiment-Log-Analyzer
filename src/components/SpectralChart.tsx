@@ -11,22 +11,27 @@ import {
     ResponsiveContainer,
     Legend,
     ReferenceDot,
+    ReferenceLine,
     Brush,
 } from 'recharts';
-import { ExperimentSession, ParsedLog } from '@/types/log';
+import { ExperimentSession, ParsedLog, LiveEvent } from '@/types/log';
 
 interface SpectralChartProps {
     sessions: ExperimentSession[];
     peaks?: { wavelength: number; intensity: number; color?: string }[];
     fittingData?: ParsedLog[];
+    liveEvents?: LiveEvent[];
     onRangeChange?: (range: [number, number] | null) => void;
+    isDark?: boolean;
 }
 
 export default function SpectralChart({
     sessions,
     peaks = [],
     fittingData = [],
-    onRangeChange
+    liveEvents = [],
+    onRangeChange,
+    isDark = false
 }: SpectralChartProps) {
     // Merge all sessions' data for the chart.
     const chartData = useMemo(() => {
@@ -157,12 +162,28 @@ export default function SpectralChart({
                         />
                     ))}
 
+                    {liveEvents.map((event) => (
+                        <ReferenceLine
+                            key={event.id}
+                            x={event.timestamp} // Assuming x-axis is wavelength for now, or we might need a time-based chart
+                            stroke={event.color || "#10b981"}
+                            strokeDasharray="3 3"
+                            label={{
+                                value: event.label,
+                                position: 'top',
+                                fill: event.color || "#10b981",
+                                fontSize: 10,
+                                fontWeight: 'bold'
+                            }}
+                        />
+                    ))}
+
                     <Brush
                         dataKey="wavelength"
                         height={30}
-                        stroke="#cbd5e1"
+                        stroke={isDark ? "#3f3f46" : "#cbd5e1"}
                         onChange={handleBrushChange}
-                        fill="#f8fafc"
+                        fill={isDark ? "#18181b" : "#f8fafc"}
                     />
                 </LineChart>
             </ResponsiveContainer>
