@@ -80,7 +80,7 @@ export default function SpectralChart({
     }
 
     return (
-        <div className="w-full h-[550px] p-4 bg-white rounded-xl shadow-sm border border-gray-100">
+        <div id="spectral-chart-container" className="w-full h-[550px] p-4 bg-white rounded-xl shadow-sm border border-gray-100">
             <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-slate-800">Spectrum Analysis</h3>
                 <div className="flex gap-2">
@@ -154,7 +154,6 @@ export default function SpectralChart({
                             fill={peak.color || "#ef4444"}
                             stroke="#fff"
                             strokeWidth={2}
-                            isFront={true}
                         />
                     ))}
 
