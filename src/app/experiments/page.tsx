@@ -1,18 +1,19 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { useRouter } from 'next/navigation';
 import { ExperimentSession } from '@/types/log';
 import LogUploader from '@/components/LogUploader';
 import SpectralChart from '@/components/SpectralChart';
-import { Layers, History, FlaskConical, Search } from 'lucide-react';
+import { Layers, History, FlaskConical, Search, BarChart3, Trash2 } from 'lucide-react';
 
 export default function ExperimentsPage() {
+    const router = useRouter();
     const [sessions, setSessions] = useState<ExperimentSession[]>([]);
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
 
-    // Local storage simulation for Phase 1 (Supabase persistence in next phase)
+    // Local storage simulation
     useEffect(() => {
         const saved = localStorage.getItem('spectral_sessions');
         if (saved) {
@@ -107,8 +108,8 @@ export default function ExperimentsPage() {
                                             key={session.id}
                                             onClick={() => toggleSession(session.id)}
                                             className={`group flex items-center justify-between p-3 rounded-xl border cursor-pointer transition-all ${selectedIds.includes(session.id)
-                                                    ? "bg-blue-50/50 border-blue-200"
-                                                    : "bg-white border-slate-100 hover:border-slate-300"
+                                                ? "bg-blue-50/50 border-blue-200"
+                                                : "bg-white border-slate-100 hover:border-slate-300"
                                                 }`}
                                         >
                                             <div className="flex items-center gap-3 overflow-hidden">
@@ -123,12 +124,23 @@ export default function ExperimentsPage() {
                                                     </p>
                                                 </div>
                                             </div>
-                                            <button
-                                                onClick={(e) => deleteSession(e, session.id)}
-                                                className="opacity-0 group-hover:opacity-100 p-1 hover:text-red-500 transition-opacity"
-                                            >
-                                                ×
-                                            </button>
+                                            <div className="flex items-center gap-1">
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        router.push(`/experiments/${session.id}`);
+                                                    }}
+                                                    className="opacity-0 group-hover:opacity-100 p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                                                >
+                                                    <BarChart3 className="w-4 h-4" />
+                                                </button>
+                                                <button
+                                                    onClick={(e) => deleteSession(e, session.id)}
+                                                    className="opacity-0 group-hover:opacity-100 p-1.5 text-slate-400 hover:text-red-500 rounded-lg transition-all"
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </button>
+                                            </div>
                                         </div>
                                     ))
                                 )}
@@ -155,7 +167,7 @@ export default function ExperimentsPage() {
                                 </div>
                                 <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
                                     <p className="text-xs text-slate-500 font-medium">Storage Method</p>
-                                    <p className="text-2xl font-bold text-slate-800 tracking-tight">Local (P1)</p>
+                                    <p className="text-2xl font-bold text-slate-800 tracking-tight">Local (P2)</p>
                                 </div>
                             </div>
                         </div>
