@@ -1,5 +1,14 @@
 # Intelligent Data Analytics Report: Photonics Experiment Log Analyzer
 
+<div align="center">
+  <img src="photonics_log_analyzer_demo.gif" width="85%" />
+  
+  <p>
+    <em>비정형 광학 실험 로그로부터 물리 파라미터를 자동 추출하고 구조화된 데이터셋으로 전환하는 파이프라인 시연 화면입니다. LLM 기반의 엔티티 추출과 통계 분석을 결합하여 실험 데이터의 무결성을 확보하고 연구 인사이트 도출을 가속화합니다.</em>
+  </p>
+</div>
+
+
 ## 1. Research Background & Data Problem
 현대 광학 실험실에서 발생하는 데이터의 대다수는 여전히 비정형 텍스트 로그, 수기 기록, 그리고 다양한 기기에서 출력되는 파편화된 데이터 형식에 머물러 있다. 이러한 **비정형 데이터의 범람**은 연구자들로 하여금 데이터 정리와 전처리에 과도한 시간을 할애하게 만들며, 정작 중요한 데이터 분석 및 인사이트 도출의 병목 현상을 초래한다.
 
